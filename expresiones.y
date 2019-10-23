@@ -4,6 +4,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "rutinas semanticas.h"
+
+char identificadores[100];
+int lenidentificadores = 0;
+
 %}
 
 %union {
@@ -11,6 +15,7 @@
 	char cadena[50];
 	float numero;
 	int tipo;
+	int lvalue;
   } s;
 }
 %token <s> NUM
@@ -38,12 +43,12 @@ line:     '\n'
 expresion:          expAsignacion
                     ;
 expAsignacion:      expCondicional
-                    |expUnaria operAsignacion expAsignacion {printf("Al identificador %s se le ha asignado %f",$<s.cadena>1,$<s.numero>3);}
+                    |expUnaria operAsignacion expAsignacion {if(!$<s.lvalue>1){printf("Error en la asignacion: No es un lvalue modificable");}}
                     ;
 operAsignacion:     '='|OPASIGNACION
 ;
 expCondicional:     expOr
-                    |expOr '?' expresion ':' expCondicional{$<s.numero>$ = $<s.numero>1?$<s.numero>3:$<s.numero>5}
+                    |expOr '?' expresion ':' expCondicional{$<s.numero>$ = $<s.numero>1?$<s.numero>3:$<s.numero>5;}
                     ;
 expOr:              expAnd
                     |expOr OPOR expAnd
@@ -78,7 +83,7 @@ expPostfijo:        expPrimaria
 listaArgumentos:    expAsignacion
                     |listaArgumentos ',' expAsignacion
                     ;
-expPrimaria:        IDENTIFICADOR
+expPrimaria:        IDENTIFICADOR {$<s.lvalue>$ = 1;}
                     |NUM
                     |CADENA
                     |'(' expresion ')'{$<s.numero>$ = $<s.numero>2;}

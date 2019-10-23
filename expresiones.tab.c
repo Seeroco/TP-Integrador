@@ -132,12 +132,13 @@ typedef union YYSTYPE
 	char cadena[50];
 	float numero;
 	int tipo;
+	int lvalue;
   } s;
 
 
 
 /* Line 214 of yacc.c  */
-#line 141 "expresiones.tab.c"
+#line 142 "expresiones.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -149,7 +150,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 153 "expresiones.tab.c"
+#line 154 "expresiones.tab.c"
 
 #ifdef short
 # undef short
@@ -447,11 +448,11 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    31,    31,    32,    35,    36,    38,    40,    41,    43,
-      43,    45,    46,    48,    49,    51,    52,    54,    55,    57,
-      58,    60,    61,    62,    64,    65,    66,    68,    69,    70,
-      72,    72,    72,    72,    72,    74,    75,    76,    78,    79,
-      81,    82,    83,    84,    86
+       0,    32,    32,    33,    36,    37,    39,    41,    42,    44,
+      44,    46,    47,    49,    50,    52,    53,    55,    56,    58,
+      59,    61,    62,    63,    65,    66,    67,    69,    70,    71,
+      73,    73,    73,    73,    73,    75,    76,    77,    79,    80,
+      82,    83,    84,    85,    87
 };
 #endif
 
@@ -1398,77 +1399,84 @@ yyreduce:
         case 5:
 
 /* Line 1455 of yacc.c  */
-#line 36 "expresiones.y"
+#line 37 "expresiones.y"
     {printf("\t%f\n",(yyvsp[(1) - (2)].s.numero));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 41 "expresiones.y"
-    {printf("Al identificador %s se le ha asignado %f",(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.numero));;}
+#line 42 "expresiones.y"
+    {if(!(yyvsp[(1) - (3)].s.lvalue)){printf("Error en la asignacion: No es un lvalue modificable");};}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 46 "expresiones.y"
-    {(yyval.s.numero) = (yyvsp[(1) - (5)].s.numero)?(yyvsp[(3) - (5)].s.numero):(yyvsp[(5) - (5)].s.numero);}
+#line 47 "expresiones.y"
+    {(yyval.s.numero) = (yyvsp[(1) - (5)].s.numero)?(yyvsp[(3) - (5)].s.numero):(yyvsp[(5) - (5)].s.numero);;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 58 "expresiones.y"
+#line 59 "expresiones.y"
     {(yyval.s.numero) = opRelacional((yyvsp[(1) - (3)].s.numero),(yyvsp[(2) - (3)].s.cadena),(yyvsp[(3) - (3)].s.numero));}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 61 "expresiones.y"
+#line 62 "expresiones.y"
     {(yyval.s.numero) = (yyvsp[(1) - (3)].s.numero) + (yyvsp[(3) - (3)].s.numero);;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 62 "expresiones.y"
+#line 63 "expresiones.y"
     {(yyval.s.numero) = (yyvsp[(1) - (3)].s.numero) - (yyvsp[(3) - (3)].s.numero);;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 65 "expresiones.y"
+#line 66 "expresiones.y"
     {(yyval.s.numero) = (yyvsp[(1) - (3)].s.numero) * (yyvsp[(3) - (3)].s.numero);;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 66 "expresiones.y"
+#line 67 "expresiones.y"
     {(yyval.s.numero) = (yyvsp[(1) - (3)].s.numero) / (yyvsp[(3) - (3)].s.numero);;}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 70 "expresiones.y"
+#line 71 "expresiones.y"
     {(yyval.s.numero) = sizeof(int);;}
+    break;
+
+  case 40:
+
+/* Line 1455 of yacc.c  */
+#line 82 "expresiones.y"
+    {(yyval.s.lvalue) = 1;;}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 84 "expresiones.y"
+#line 85 "expresiones.y"
     {(yyval.s.numero) = (yyvsp[(2) - (3)].s.numero);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1472 "expresiones.tab.c"
+#line 1480 "expresiones.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1680,7 +1688,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 89 "expresiones.y"
+#line 90 "expresiones.y"
 
 yyerror (s)  /* Llamada por yyparse ante un error */
      char *s;

@@ -19,9 +19,9 @@ OPRELACIONAL		<=|>=|>|<
 OPPPMM			\+\+|\-\-
 %%
 
-{ENTERO}  	{yylval.s.numero = atoi(yytext); return NUM;}
-{REAL}		{yylval.s.numero = atof(yytext); return NUM;}
-{CADENA}	{strcpy(yylval.s.cadena,yytext); return CADENA;}
+{ENTERO}  	{yylval.s.numero = atoi(yytext);yylval.s.tipo = 2; return NUM;}
+{REAL}		{yylval.s.numero = atof(yytext);yylval.s.tipo = 3; return NUM;}
+{CADENA}	{strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 4; return CADENA;}
 "+"		{return '+';}
 "-"		{return '-';}
 "*"		{return '*';}
@@ -35,6 +35,8 @@ OPPPMM			\+\+|\-\-
 "&"		{return '&';}
 "!"		{return '!';}
 ","		{return ',';}
+"["		{return '[';}
+"]"		{return ']';}
 sizeof		{return SIZEOF;}
 {TIPODATO}	{strcpy(yylval.s.cadena,yytext);return TYPENAME;}
 {IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 1;return IDENTIFICADOR;}
