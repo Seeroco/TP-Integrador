@@ -17,6 +17,7 @@ OPAND			&&
 OPIGUALDAD		==|!=
 OPRELACIONAL		<=|>=|>|<
 OPPPMM			\+\+|\-\-
+CONSTANTE
 %%
 
 {ENTERO}  	{yylval.s.numero = atoi(yytext);yylval.s.tipo = 2; return NUM;}
@@ -46,4 +47,6 @@ sizeof		{return SIZEOF;}
 {OPIGUALDAD}	{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
 {OPRELACIONAL}	{strcpy(yylval.s.cadena,yytext);return OPRELACIONAL;}
 {OPPPMM}	{strcpy(yylval.s.cadena,yytext);return OPPPMM;}
+{CONSTANTE}	{strcpy(yylval.s.cadena,yytext);return CONSTANTE;}
 %%
+
