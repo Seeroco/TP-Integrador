@@ -29,17 +29,71 @@ int lenidentificadores = 0;
 %token <s> TYPENAME
 %token <s> OPPPMM
 %token <s> SIZEOF
+%token <s> CONSTANTE
 
 %right OPPPMM
 %%
 
-input:    /* vac�o */
+input:    /* vacío */
         | input line
 ;
 
 line:     '\n'
         | expresion '\n' {printf("\t%f\n",$<s.numero>1);}
 ;
+//DECLARACIONES
+declaracion: 		TYPENAME listaVarSimples ;
+
+listaVarSimples: 	unaVarSimple
+ 			|listaVarSimples , unaVarSimple
+
+unaVarSimple: 		variable 
+			|variable inicial
+
+variable: 		IDENTIFICADOR
+
+inicial: 		'=' constante
+
+constante:		CONSTANTE //((falta crear la ER en flex))  
+
+
+
+
+
+//SENTENCIAS
+sentencia: 		sentCompuesta 
+			|sentExpresión 
+			|sentSelección 
+			|sentIteración 
+			|sentSalto
+
+sentCompuesta: 	    	'{' listaDeclaraciones listaSentencias '}' //(verificar
+			|'{' '}'
+
+listaDeclaraciones: 	declaración
+ 			|listaDeclaraciones declaración
+
+listaSentencias: 	sentencia
+ 			|listaSentencias sentencia
+
+sentExpresión: 		;
+			|expresion
+
+sentSelección: 		if '(' expresión ')' sentencia
+ 			|if '(' expresión ')' sentencia else sentencia
+ 			|switch '(' expresión ')' sentencia
+
+sentIteración:		while '(' expresión ')' sentencia
+ 			|do sentencia while '(' expresión ')' ;
+   			|for '(' expresión ';' expresión ';' expresión ')' sentencia //verrificar si estan todas las opciones
+			|for '(' ';' ';' ')'
+			|for '('  ';' expresión ';'  ')'
+
+sentSalto: 		return expresión ;
+			|return
+
+//EXPRESIONES
+ 
 expresion:          expAsignacion
                     ;
 expAsignacion:      expCondicional
