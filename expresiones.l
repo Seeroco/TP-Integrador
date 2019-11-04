@@ -11,13 +11,12 @@ REAL            	[0-9]+("."[0-9]+)?
 CADENA			\"([^\"]|(\\\"))*\"
 TIPODATO		(char|double|float|int|long|short|void)
 OPASIGNACION		(=|\+=|\-=|\*=|\/=)
-IDENTIFICADOR 		[a-z_][a-zA-Z0-9]*
+IDENTIFICADOR 		[a-zA-Z_][a-zA-Z0-9_]*
 OPOR			\|\|
 OPAND			&&
 OPIGUALDAD		==|!=
 OPRELACIONAL		<=|>=|>|<
 OPPPMM			\+\+|\-\-
-CONSTANTE
 %%
 
 {ENTERO}  	{yylval.s.numero = atoi(yytext);yylval.s.tipo = 2; return NUM;}
@@ -38,6 +37,7 @@ CONSTANTE
 ","		{return ',';}
 "["		{return '[';}
 "]"		{return ']';}
+";"		{return ';';}
 sizeof		{return SIZEOF;}
 {TIPODATO}	{strcpy(yylval.s.cadena,yytext);return TYPENAME;}
 {IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 1;return IDENTIFICADOR;}
@@ -47,6 +47,4 @@ sizeof		{return SIZEOF;}
 {OPIGUALDAD}	{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
 {OPRELACIONAL}	{strcpy(yylval.s.cadena,yytext);return OPRELACIONAL;}
 {OPPPMM}	{strcpy(yylval.s.cadena,yytext);return OPPPMM;}
-{CONSTANTE}	{strcpy(yylval.s.cadena,yytext);return CONSTANTE;}
 %%
-

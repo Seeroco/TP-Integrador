@@ -30,70 +30,59 @@ int lenidentificadores = 0;
 %token <s> OPPPMM
 %token <s> SIZEOF
 %token <s> CONSTANTE
-
 %right OPPPMM
+%token <s> FOR
+%token <s> DO
+%token <s> SWITCH
+%token <s> IF
+%token <s> ELSE
+%token <s> WHILE
+%token <s> RETURN
 %%
-
-input:    /* vacío */
+input:    /* vac�o */
         | input line
 ;
 
 line:     '\n'
-        | expresion '\n' {printf("\t%f\n",$<s.numero>1);}
+        | sentencia'\n'
 ;
+
+sentencia: 		sentSeleccion';'
+			|sentIteracion';'
+			|sentSalto';'
+			|sentExpresion';'
+			|declaracion ';'
+			;
+
+sentExpresion:		expresion
+			;
+
+sentSeleccion: 		IF '(' expresion ')' sentencia
+ 			|IF '(' expresion ')' sentencia ELSE sentencia
+ 			|SWITCH '(' expresion ')' sentencia
+			;
+
+sentIteracion:		WHILE '(' expresion ')' sentencia 
+			|DO sentencia WHILE '(' expresion ')'
+			|FOR '(' expresion ';' expresion ';' expresion ')' sentencia //verificar si estan todas las opciones
+			|FOR '(' ';' ';' ')' 
+			|FOR '('  ';' expresion ';'  ')'
+sentSalto: 		RETURN expresion 
+
+
 //DECLARACIONES
-declaracion: 		TYPENAME listaVarSimples ;
+declaracion: 		TYPENAME listaVarSimples 
+			;
 
 listaVarSimples: 	unaVarSimple
- 			|listaVarSimples , unaVarSimple
-
-unaVarSimple: 		variable 
-			|variable inicial
-
-variable: 		IDENTIFICADOR
-
-inicial: 		'=' constante
-
-constante:		CONSTANTE //((falta crear la ER en flex))  
-
-
-
-
-
-//SENTENCIAS
-sentencia: 		sentCompuesta 
-			|sentExpresión 
-			|sentSelección 
-			|sentIteración 
-			|sentSalto
-
-sentCompuesta: 	    	'{' listaDeclaraciones listaSentencias '}' //(verificar
-			|'{' '}'
-
-listaDeclaraciones: 	declaración
- 			|listaDeclaraciones declaración
-
-listaSentencias: 	sentencia
- 			|listaSentencias sentencia
-
-sentExpresión: 		;
-			|expresion
-
-sentSelección: 		if '(' expresión ')' sentencia
- 			|if '(' expresión ')' sentencia else sentencia
- 			|switch '(' expresión ')' sentencia
-
-sentIteración:		while '(' expresión ')' sentencia
- 			|do sentencia while '(' expresión ')' ;
-   			|for '(' expresión ';' expresión ';' expresión ')' sentencia //verrificar si estan todas las opciones
-			|for '(' ';' ';' ')'
-			|for '('  ';' expresión ';'  ')'
-
-sentSalto: 		return expresión ;
-			|return
-
+ 			|listaVarSimples ',' unaVarSimple
+			;
+unaVarSimple: 		IDENTIFICADOR
+			|IDENTIFICADOR inicial
+			;
+inicial: 		'=' expresion
+			;
 //EXPRESIONES
- 
 expresion:          expAsignacion
                     ;
 expAsignacion:      expCondicional
