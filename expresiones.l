@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+
 %}
 
 ENTERO			[1-9][0-9]*
@@ -11,6 +12,7 @@ REAL            	[0-9]+("."[0-9]+)?
 CADENA			\"([^\"]|(\\\"))*\"
 TIPODATO		(char|double|float|int|long|short|void)
 OPASIGNACION		(=|\+=|\-=|\*=|\/=)
+CARACTER		'.'
 IDENTIFICADOR 		[a-zA-Z_][a-zA-Z0-9_]*
 OPOR			\|\|
 OPAND			&&
@@ -19,6 +21,7 @@ OPRELACIONAL		<=|>=|>|<
 OPPPMM			\+\+|\-\-
 %%
 
+{CARACTER}	{yylval.s.numero = yytext[1]; yylval.s.tipo = 1; return CARACTER;}
 {ENTERO}  	{yylval.s.numero = atoi(yytext);yylval.s.tipo = 2; return NUM;}
 {REAL}		{yylval.s.numero = atof(yytext);yylval.s.tipo = 3; return NUM;}
 {CADENA}	{strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 4; return CADENA;}
@@ -38,9 +41,11 @@ OPPPMM			\+\+|\-\-
 "["		{return '[';}
 "]"		{return ']';}
 ";"		{return ';';}
+"{"		{return '{';}
+"}"		{return '{';}
 sizeof		{return SIZEOF;}
 {TIPODATO}	{strcpy(yylval.s.cadena,yytext);return TYPENAME;}
-{IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 1;return IDENTIFICADOR;}
+{IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 0;return IDENTIFICADOR;}
 {OPASIGNACION}	{strcpy(yylval.s.cadena,yytext);return OPASIGNACION;}
 {OPOR}		{strcpy(yylval.s.cadena,yytext);return OPOR;}
 {OPAND}		{strcpy(yylval.s.cadena,yytext);return OPAND;}

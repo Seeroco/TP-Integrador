@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "rutinas semanticas.h"
+extern FILE *yyin;
 
 char identificadores[100];
 int lenidentificadores = 0;
@@ -38,17 +39,21 @@ int lenidentificadores = 0;
 %token <s> ELSE
 %token <s> WHILE
 %token <s> RETURN
+%token <s> CARACTER
 %%
 input:    /* vacío */
         | input line
 ;
 
 line:     '\n'
-        | sentencia'\n'
+        | listaSentencias'\n'
 ;
 
-sentencia: 		sentSeleccion';'
-			|sentIteracion';'
+listaSentencias:	sentencia
+			|listaSentencias sentencia
+
+sentencia: 		sentSeleccion ';'
+			|sentIteracion ';'
 			|sentSalto';'
 			|sentExpresion';'
 			|declaracion ';'
@@ -71,17 +76,36 @@ sentSalto: 		RETURN expresion
 
 
 //DECLARACIONES
-declaracion: 		TYPENAME listaVarSimples 
+declaracion:		declaracionVariable
+			|declaracionFuncion
+			;
+
+declaracionFuncion:	TYPENAME IDENTIFICADOR'('parametros')''{'listaSentencias'}'
+			;
+
+parametros:		/*vacio*/
+			|TYPENAME IDENTIFICADOR opArray
+			|parametros',' TYPENAME IDENTIFICADOR opArray
+			;
+declaracionVariable: 	TYPENAME listaVarSimples
 			;
 
 listaVarSimples: 	unaVarSimple
  			|listaVarSimples ',' unaVarSimple
 			;
-unaVarSimple: 		IDENTIFICADOR
-			|IDENTIFICADOR inicial
+
+unaVarSimple: 		IDENTIFICADOR opArray
+			|IDENTIFICADOR opArray inicial
+			;
+opArray:		/*vacio*/
+			|'['expresion']'
 			;
 inicial: 		'=' expresion
 			;
+
+
+
+
 //EXPRESIONES
 expresion:          expAsignacion
                     ;
@@ -131,7 +155,7 @@ expPrimaria:        IDENTIFICADOR {$<s.lvalue>$ = 1;}
                     |CADENA
                     |'(' expresion ')'{$<s.numero>$ = $<s.numero>2;}
                     ;
-nombreTipo:         TYPENAME 
+nombreTipo:         TYPENAME {printf("He leido");}
 ;
 
 %%
@@ -142,5 +166,6 @@ yyerror (s)  /* Llamada por yyparse ante un error */
 }
 
 main (){
+    //yyin = fopen("entrada.txt","r+");
     yyparse();
 }

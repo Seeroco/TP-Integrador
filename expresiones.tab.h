@@ -49,7 +49,16 @@
      OPASIGNACION = 265,
      TYPENAME = 266,
      OPPPMM = 267,
-     SIZEOF = 268
+     SIZEOF = 268,
+     CONSTANTE = 269,
+     FOR = 270,
+     DO = 271,
+     SWITCH = 272,
+     IF = 273,
+     ELSE = 274,
+     WHILE = 275,
+     RETURN = 276,
+     CARACTER = 277
    };
 #endif
 
@@ -60,7 +69,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 9 "expresiones.y"
+#line 14 "expresiones.y"
 
   struct {
 	char cadena[50];
@@ -72,7 +81,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 76 "expresiones.tab.h"
+#line 85 "expresiones.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
