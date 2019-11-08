@@ -58,5 +58,6 @@ sizeof		{return SIZEOF;}
 
 {OPRELACIONAL}	{strcpy(yylval.s.cadena,yytext);return OPRELACIONAL;}
 {OPPPMM}	{strcpy(yylval.s.cadena,yytext);return OPPPMM;}
-" "				
+" "	
+"\t"			
 %%

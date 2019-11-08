@@ -60,7 +60,8 @@ sentenciaCompuesta:	'{'listaDeSentencias'}'
 			;
 
 listaDeSentencias:      /*vacio*/
-			|listaDeSentencias sentencia
+			|listaDeSentencias'\n'
+			|listaDeSentencias sentencia '\n'
 			;
 sentExpresion:		expresion
 			;
@@ -73,9 +74,15 @@ sentSeleccion: 		IF '(' expresion ')' sentencia
 
 sentIteracion:		WHILE '(' expresion ')' sentencia 
 			|DO sentencia WHILE '(' expresion ')' ';'
-			|FOR '(' expresion ';' expresion ';' expresion ')' sentencia //verificar si estan todas las opciones
-			|FOR '(' ';' ';' ')' 
-			|FOR '('  ';' expresion ';'  ')'
+			|FOR '(' paramFor1 ';' paramFor2 ';' paramFor2 ')' sentencia 
+
+paramFor1:		/*vacio*/
+			|declaracionVariable
+			;
+paramFor2:		/*vacio*/
+			|expresion
+			;
+
 sentSalto: 		RETURN expresion 
 
 
