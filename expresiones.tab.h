@@ -69,12 +69,12 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 14 "expresiones.y"
+#line 13 "expresiones.y"
 
   struct {
-	char cadena[50];
+	char cadena[100];
 	float numero;
-	int tipo;
+	char tipo[100];
 	int lvalue;
   } s;
 

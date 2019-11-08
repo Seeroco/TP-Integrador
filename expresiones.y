@@ -6,16 +6,15 @@
 #include "rutinas semanticas.h"
 extern FILE *yyin;
 
-char identificadores[100];
-int lenidentificadores = 0;
+map identificadores;
 
 %}
 
 %union {
   struct {
-	char cadena[50];
+	char cadena[100];
 	float numero;
-	int tipo;
+	char tipo[100];
 	int lvalue;
   } s;
 }
@@ -41,16 +40,13 @@ int lenidentificadores = 0;
 %token <s> RETURN
 %token <s> CARACTER
 %%
-input:    /* vacío */
-        | input line
-;
 
-line:     '\n'
-        | listaSentencias'\n'
-;
-
-listaSentencias:	sentencia
-			|listaSentencias sentencia
+//main:			TYPENAME IDENTIFICADOR '('')''{'lineList'}'{printf("Main?");}
+			
+lineList:		line
+			|lineList line
+line:			'\n'
+			|sentencia '\n'
 
 sentencia: 		sentSeleccion ';'
 			|sentIteracion ';'
@@ -79,28 +75,34 @@ sentSalto: 		RETURN expresion
 declaracion:		declaracionVariable
 			|declaracionFuncion
 			;
-
-declaracionFuncion:	TYPENAME IDENTIFICADOR'('parametros')''{'listaSentencias'}'
+declaracionFuncion:	TYPENAME IDENTIFICADOR'('parametros')'{printf("Llegaron al main");}
 			;
-
 parametros:		/*vacio*/
-			|TYPENAME IDENTIFICADOR opArray
-			|parametros',' TYPENAME IDENTIFICADOR opArray
+			|TYPENAME variable 
+			|parametros',' TYPENAME variable
 			;
-declaracionVariable: 	TYPENAME listaVarSimples
+declaracionVariable: 	TYPENAME listaVarSimples {if(yaDeclarado($<s.cadena>2,identificadores)){printf("Doble declaración de variables");}else{
+							$<s.lvalue>$ = 1;
+							strcpy($<s.tipo>$,$<s.tipo>1);
+							strcpy(identificadores.value[identificadores.length],$<s.cadena>2);
+							strcpy(identificadores.type[identificadores.length],$<s.cadena>1);
+							identificadores.length++;}}
 			;
 
 listaVarSimples: 	unaVarSimple
  			|listaVarSimples ',' unaVarSimple
 			;
 
-unaVarSimple: 		IDENTIFICADOR opArray
-			|IDENTIFICADOR opArray inicial
+unaVarSimple: 		variable	 
+			|variable inicial 
 			;
+variable:		IDENTIFICADOR opArray 
 opArray:		/*vacio*/
 			|'['expresion']'
 			;
-inicial: 		'=' expresion
+inicial: 		'=' expresion	{strcpy($<s.cadena>$,$<s.cadena>2);
+						strcpy($<s.tipo>$,$<s.tipo>2);
+						$<s.numero>$ = $<s.numero>2;}
 			;
 
 
@@ -130,12 +132,12 @@ expRelacional:      expAditiva
                     |expRelacional OPRELACIONAL expAditiva {$<s.numero>$ = opRelacional($<s.numero>1,$<s.cadena>2,$<s.numero>3)}
                     ;
 expAditiva:         expMultiplicativa
-                    |expMultiplicativa '+' expAditiva {$<s.numero>$ = $<s.numero>1 + $<s.numero>3;} 
-                    |expMultiplicativa '-' expAditiva {$<s.numero>$ = $<s.numero>1 - $<s.numero>3;} 
+                    |expMultiplicativa '+' expAditiva {checkType($<s.tipo>1,$<s.tipo>3);}
+                    |expMultiplicativa '-' expAditiva {checkType($<s.tipo>1,$<s.tipo>3);} 
                     ;
 expMultiplicativa:  expUnaria
-                    |expMultiplicativa '*' expUnaria {$<s.numero>$ = $<s.numero>1 * $<s.numero>3;} 
-		    |expMultiplicativa '/' expUnaria {$<s.numero>$ = $<s.numero>1 / $<s.numero>3;} 
+                    |expMultiplicativa '*' expUnaria {checkType($<s.tipo>1,$<s.tipo>3);} 
+		    |expMultiplicativa '/' expUnaria {checkType($<s.tipo>1,$<s.tipo>3);}
                     ;
 expUnaria:          expPostfijo
                     |operUnario expUnaria 
@@ -150,22 +152,24 @@ expPostfijo:        expPrimaria
 listaArgumentos:    expAsignacion
                     |listaArgumentos ',' expAsignacion
                     ;
-expPrimaria:        IDENTIFICADOR {$<s.lvalue>$ = 1;}
+expPrimaria:        IDENTIFICADOR 
                     |NUM
                     |CADENA
+		    |CARACTER	
                     |'(' expresion ')'{$<s.numero>$ = $<s.numero>2;}
                     ;
-nombreTipo:         TYPENAME {printf("He leido");}
+nombreTipo:         TYPENAME 
 ;
 
 %%
 yyerror (s)  /* Llamada por yyparse ante un error */
      char *s;
 {
-  printf ("%s\n", s);
+  printf ("%s\n",s);
 }
 
 main (){
-    //yyin = fopen("entrada.txt","r+");
+    yyin = fopen("entrada.txt","r+");
     yyparse();
+    reportMap(identificadores,"Identificador: ");
 }

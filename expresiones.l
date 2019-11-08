@@ -10,7 +10,7 @@
 ENTERO			[1-9][0-9]*
 REAL            	[0-9]+("."[0-9]+)?
 CADENA			\"([^\"]|(\\\"))*\"
-TIPODATO		(char|double|float|int|long|short|void)
+TIPODATO		(char|double|float|int|long|short|void)"*"?
 OPASIGNACION		(=|\+=|\-=|\*=|\/=)
 CARACTER		'.'
 IDENTIFICADOR 		[a-zA-Z_][a-zA-Z0-9_]*
@@ -20,11 +20,10 @@ OPIGUALDAD		==|!=
 OPRELACIONAL		<=|>=|>|<
 OPPPMM			\+\+|\-\-
 %%
-
-{CARACTER}	{yylval.s.numero = yytext[1]; yylval.s.tipo = 1; return CARACTER;}
-{ENTERO}  	{yylval.s.numero = atoi(yytext);yylval.s.tipo = 2; return NUM;}
-{REAL}		{yylval.s.numero = atof(yytext);yylval.s.tipo = 3; return NUM;}
-{CADENA}	{strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 4; return CADENA;}
+{CARACTER}	{yylval.s.numero = yytext[1];  strcpy(yylval.s.tipo,"char"); return CARACTER;}
+{ENTERO}  	{yylval.s.numero = atoi(yytext); strcpy(yylval.s.tipo,"int"); return NUM;}
+{REAL}		{yylval.s.numero = atof(yytext);strcpy(yylval.s.tipo,"float");return NUM;}
+{CADENA}	{strcpy(yylval.s.cadena,yytext);strcpy(yylval.s.tipo,"char*");return CADENA;}
 "+"		{return '+';}
 "-"		{return '-';}
 "*"		{return '*';}
@@ -45,11 +44,12 @@ OPPPMM			\+\+|\-\-
 "}"		{return '{';}
 sizeof		{return SIZEOF;}
 {TIPODATO}	{strcpy(yylval.s.cadena,yytext);return TYPENAME;}
-{IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);yylval.s.tipo = 0;return IDENTIFICADOR;}
+{IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);return IDENTIFICADOR;}
 {OPASIGNACION}	{strcpy(yylval.s.cadena,yytext);return OPASIGNACION;}
 {OPOR}		{strcpy(yylval.s.cadena,yytext);return OPOR;}
 {OPAND}		{strcpy(yylval.s.cadena,yytext);return OPAND;}
 {OPIGUALDAD}	{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
 {OPRELACIONAL}	{strcpy(yylval.s.cadena,yytext);return OPRELACIONAL;}
 {OPPPMM}	{strcpy(yylval.s.cadena,yytext);return OPPPMM;}
+" "				
 %%
