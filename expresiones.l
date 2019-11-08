@@ -24,12 +24,19 @@ OPPPMM			\+\+|\-\-
 {ENTERO}  	{yylval.s.numero = atoi(yytext); strcpy(yylval.s.tipo,"int"); return NUM;}
 {REAL}		{yylval.s.numero = atof(yytext);strcpy(yylval.s.tipo,"float");return NUM;}
 {CADENA}	{strcpy(yylval.s.cadena,yytext);strcpy(yylval.s.tipo,"char*");return CADENA;}
+while		{return WHILE;}
+if		{return IF;}
+for		{return FOR;}
+else		{return ELSE;}
+return		{return RETURN;}
+do		{return DO;}
 "+"		{return '+';}
 "-"		{return '-';}
 "*"		{return '*';}
 "/"		{return '/';}
 "("		{return '(';}
 ")"		{return ')';}
+{OPIGUALDAD}	{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
 "="		{return '=';}
 "\n"    	{return '\n';}
 "?"		{return '?';}
@@ -41,14 +48,14 @@ OPPPMM			\+\+|\-\-
 "]"		{return ']';}
 ";"		{return ';';}
 "{"		{return '{';}
-"}"		{return '{';}
+"}"		{return '}';}
 sizeof		{return SIZEOF;}
 {TIPODATO}	{strcpy(yylval.s.cadena,yytext);return TYPENAME;}
 {IDENTIFICADOR} {strcpy(yylval.s.cadena,yytext);return IDENTIFICADOR;}
 {OPASIGNACION}	{strcpy(yylval.s.cadena,yytext);return OPASIGNACION;}
 {OPOR}		{strcpy(yylval.s.cadena,yytext);return OPOR;}
 {OPAND}		{strcpy(yylval.s.cadena,yytext);return OPAND;}
-{OPIGUALDAD}	{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
+
 {OPRELACIONAL}	{strcpy(yylval.s.cadena,yytext);return OPRELACIONAL;}
 {OPPPMM}	{strcpy(yylval.s.cadena,yytext);return OPPPMM;}
 " "				

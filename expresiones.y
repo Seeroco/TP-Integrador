@@ -39,32 +39,40 @@ map identificadores;
 %token <s> WHILE
 %token <s> RETURN
 %token <s> CARACTER
+%expect 1
 %%
 
 //main:			TYPENAME IDENTIFICADOR '('')''{'lineList'}'{printf("Main?");}
 			
-lineList:		line
-			|lineList line
+input:			/*vacio*/		
+			|input line
 line:			'\n'
 			|sentencia '\n'
 
-sentencia: 		sentSeleccion ';'
-			|sentIteracion ';'
+sentencia: 		sentSeleccion 
+			|sentenciaCompuesta
+			|sentIteracion 
 			|sentSalto';'
 			|sentExpresion';'
 			|declaracion ';'
 			;
+sentenciaCompuesta:	'{'listaDeSentencias'}'
+			;
 
+listaDeSentencias:      /*vacio*/
+			|listaDeSentencias sentencia
+			;
 sentExpresion:		expresion
 			;
 
-sentSeleccion: 		IF '(' expresion ')' sentencia
- 			|IF '(' expresion ')' sentencia ELSE sentencia
- 			|SWITCH '(' expresion ')' sentencia
+sentSeleccion: 		IF '(' expresion ')' sentencia 
+			|IF '(' expresion ')' sentencia ELSE sentencia 
+ 			|SWITCH '(' expresion ')' sentencia 
 			;
 
+
 sentIteracion:		WHILE '(' expresion ')' sentencia 
-			|DO sentencia WHILE '(' expresion ')'
+			|DO sentencia WHILE '(' expresion ')' ';'
 			|FOR '(' expresion ';' expresion ';' expresion ')' sentencia //verificar si estan todas las opciones
 			|FOR '(' ';' ';' ')' 
 			|FOR '('  ';' expresion ';'  ')'
@@ -112,7 +120,7 @@ inicial: 		'=' expresion	{strcpy($<s.cadena>$,$<s.cadena>2);
 expresion:          expAsignacion
                     ;
 expAsignacion:      expCondicional
-                    |expUnaria operAsignacion expAsignacion {if(!$<s.lvalue>1){printf("Error en la asignacion: No es un lvalue modificable");}}
+                    |expUnaria operAsignacion expAsignacion {if(!$<s.lvalue>1){printf("Error en la asignacion: %s no es un lvalue modificable",$<s.numero>1);}}
                     ;
 operAsignacion:     '='|OPASIGNACION
 ;
@@ -152,7 +160,7 @@ expPostfijo:        expPrimaria
 listaArgumentos:    expAsignacion
                     |listaArgumentos ',' expAsignacion
                     ;
-expPrimaria:        IDENTIFICADOR 
+expPrimaria:        IDENTIFICADOR {$<s.lvalue>$ = 1;}
                     |NUM
                     |CADENA
 		    |CARACTER	
