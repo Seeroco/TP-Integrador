@@ -9,6 +9,9 @@ extern FILE *yyin;
 map identificadores;
 fInfo funciones[100];
 int funcioneslen = 0;
+
+int lineas = 1;
+
 %}
 
 %union {
@@ -39,15 +42,16 @@ int funcioneslen = 0;
 %token <s> WHILE
 %token <s> RETURN
 %token <s> CARACTER
-%expect 1
+%expect 2
 %%
 
 //main:			TYPENAME IDENTIFICADOR '('')''{'lineList'}'{printf("Main?");}
 			
 input:			/*vacio*/		
 			|input line
-line:			'\n'
-			|sentencia '\n'
+line:			'\n'{lineas++;}
+			|sentencia '\n'{lineas++;}
+			|sentencia
 
 sentencia: 		sentSeleccion 
 			|sentenciaCompuesta
@@ -60,8 +64,8 @@ sentenciaCompuesta:	'{'listaDeSentencias'}'
 			;
 
 listaDeSentencias:      /*vacio*/
-			|listaDeSentencias'\n'
-			|listaDeSentencias sentencia '\n'
+			|listaDeSentencias'\n'	{lineas++;}
+			|listaDeSentencias sentencia '\n'{lineas++;}
 			;
 sentExpresion:		expresion
 			;
@@ -197,12 +201,14 @@ nombreTipo:         TYPENAME
 yyerror (s)  /* Llamada por yyparse ante un error */
      char *s;
 {
-  printf ("%s\n",s);
+  printf ("Error de sintaxis en la linea: %d. Terminando el programa. \n",lineas);
 }
 
 main (){
     yyin = fopen("entrada.txt","r+");
-    yyparse();
-    reportMap(identificadores,"Identificador: ");
-    reportFunction(funciones,funcioneslen);
+    int error = yyparse();
+    if(!ok){
+	reportMap(identificadores,"Identificador: ");
+	reportFunction(funciones,funcioneslen);
+    }
 }

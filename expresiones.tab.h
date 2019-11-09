@@ -69,7 +69,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 14 "expresiones.y"
+#line 17 "expresiones.y"
 
   struct {
 	char cadena[100];
