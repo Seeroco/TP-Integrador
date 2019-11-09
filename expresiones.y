@@ -207,7 +207,7 @@ yyerror (s)  /* Llamada por yyparse ante un error */
 main (){
     yyin = fopen("entrada.txt","r+");
     int error = yyparse();
-    if(!ok){
+    if(!error){
 	reportMap(identificadores,"Identificador: ");
 	reportFunction(funciones,funcioneslen);
     }

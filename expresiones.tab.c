@@ -1910,10 +1910,9 @@ yyerror (s)  /* Llamada por yyparse ante un error */
 
 main (){
     yyin = fopen("entrada.txt","r+");
-    int ok = yyparse();
-    if(!ok){
+    int error = yyparse();
+    if(!error){
 	reportMap(identificadores,"Identificador: ");
 	reportFunction(funciones,funcioneslen);
-	printf("El archivo tiene %d lineas",lineas);
     }
 }
