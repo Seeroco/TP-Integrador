@@ -834,7 +834,7 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 #line 54 "expresiones.l"
-{strcpy(yylval.s.cadena,yytext);return IDENTIFICADOR;}
+{strcpy(yylval.s.cadena,yytext);strcpy(yylval.s.tipo," ");return IDENTIFICADOR;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP

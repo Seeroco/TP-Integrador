@@ -9,6 +9,14 @@ char type[100][100];
 int length;
 
 }map;
+
+typedef struct{
+    char name[100];
+    char type[100][100];
+    int length;
+
+}fInfo;
+
 int yaDeclarado(char identificadorNuevo[100], map listaID){
 
     int b = 0;
@@ -25,12 +33,25 @@ void reportMap(map m,char valueName[100]){
 
 for(int i = 0; i<m.length; i++){
     printf("%s%s\n",valueName,m.value[i]);
-    printf("Tipo: %s\n",m.type[i]);
+    printf("Tipo: %s\n\n",m.type[i]);
 }
 
 
 }
 
+void reportFunction(fInfo funciones[100],int funcioneslen){
+
+    for(int i = 0;i < funcioneslen;i++ ){
+        printf("Funcion: %s\n",funciones[i].name);
+        int j = 0;
+        while(j<funciones[i].length){
+            printf("Recibe: %s\n",funciones[i].type[j]);
+            j++;
+        }
+        printf("Devuelve: %s\n\n",funciones[i].type[j]);
+    }
+
+}
 
 float opRelacional(float t1,char op[50], float t2){
 

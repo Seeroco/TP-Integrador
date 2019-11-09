@@ -10,7 +10,7 @@
 ENTERO			[1-9][0-9]*
 REAL            	[0-9]+("."[0-9]+)?
 CADENA			\"([^\"]|(\\\"))*\"
-TIPODATO		(char|double|float|int|long|short|void)"*"?
+TIPODATO		(char|double|float|int|long|short|void) *"*"?
 OPASIGNACION		(=|\+=|\-=|\*=|\/=)
 CARACTER		'.'
 IDENTIFICADOR 		[a-zA-Z_][a-zA-Z0-9_]*

@@ -7,7 +7,8 @@
 extern FILE *yyin;
 
 map identificadores;
-
+fInfo funciones[100];
+int funcioneslen = 0;
 %}
 
 %union {
@@ -30,7 +31,6 @@ map identificadores;
 %token <s> OPPPMM
 %token <s> SIZEOF
 %token <s> CONSTANTE
-%right OPPPMM
 %token <s> FOR
 %token <s> DO
 %token <s> SWITCH
@@ -54,7 +54,7 @@ sentencia: 		sentSeleccion
 			|sentIteracion 
 			|sentSalto';'
 			|sentExpresion';'
-			|declaracion ';'
+			|declaracion 
 			;
 sentenciaCompuesta:	'{'listaDeSentencias'}'
 			;
@@ -87,20 +87,37 @@ sentSalto: 		RETURN expresion
 
 
 //DECLARACIONES
-declaracion:		declaracionVariable
+declaracion:		declaracionVariable ';'
 			|declaracionFuncion
 			;
-declaracionFuncion:	TYPENAME IDENTIFICADOR'('parametros')'{printf("Llegaron al main");}
+declaracionFuncion:	TYPENAME IDENTIFICADOR'('parametros')' cuerpo	{strcpy(funciones[funcioneslen].name,$<s.cadena>2);
+									strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],$<s.cadena>1);
+									funcioneslen++;}
+			;
+cuerpo:			';'
+			|sentencia
 			;
 parametros:		/*vacio*/
-			|TYPENAME variable 
-			|parametros',' TYPENAME variable
+			|TYPENAME variable 		{$<s.lvalue>$ = 1;
+							strcpy($<s.tipo>$,$<s.tipo>1);
+							strcpy(identificadores.value[identificadores.length],$<s.cadena>2);
+							strcpy(identificadores.type[identificadores.length],strcat($<s.cadena>1,$<s.tipo>2));
+							identificadores.length++;
+							strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],strcat($<s.cadena>1,$<s.tipo>2));
+							funciones[funcioneslen].length++}
+			|parametros',' TYPENAME variable {$<s.lvalue>$ = 3;
+							strcpy($<s.tipo>$,$<s.tipo>3);
+							strcpy(identificadores.value[identificadores.length],$<s.cadena>4);
+							strcpy(identificadores.type[identificadores.length],strcat($<s.cadena>3,$<s.tipo>4));
+							identificadores.length++;
+							strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],strcat($<s.cadena>3,$<s.tipo>4));
+							funciones[funcioneslen].length++}
 			;
-declaracionVariable: 	TYPENAME listaVarSimples {if(yaDeclarado($<s.cadena>2,identificadores)){printf("Doble declaración de variables");}else{
+declaracionVariable: 	TYPENAME listaVarSimples {if(yaDeclarado($<s.cadena>2,identificadores)){printf("Doble declaracion de variables\n");}else{
 							$<s.lvalue>$ = 1;
 							strcpy($<s.tipo>$,$<s.tipo>1);
 							strcpy(identificadores.value[identificadores.length],$<s.cadena>2);
-							strcpy(identificadores.type[identificadores.length],$<s.cadena>1);
+							strcpy(identificadores.type[identificadores.length],strcat($<s.cadena>1,$<s.tipo>2));
 							identificadores.length++;}}
 			;
 
@@ -111,9 +128,9 @@ listaVarSimples: 	unaVarSimple
 unaVarSimple: 		variable	 
 			|variable inicial 
 			;
-variable:		IDENTIFICADOR opArray 
-opArray:		/*vacio*/
-			|'['expresion']'
+variable:		IDENTIFICADOR opArray {strcpy($<s.tipo>$,$<s.tipo>2);}
+opArray:		/*vacio*/	{strcpy($<s.tipo>$," ");}
+			|'['expresion']'{strcpy($<s.tipo>$,"*");}
 			;
 inicial: 		'=' expresion	{strcpy($<s.cadena>$,$<s.cadena>2);
 						strcpy($<s.tipo>$,$<s.tipo>2);
@@ -187,4 +204,5 @@ main (){
     yyin = fopen("entrada.txt","r+");
     yyparse();
     reportMap(identificadores,"Identificador: ");
+    reportFunction(funciones,funcioneslen);
 }
