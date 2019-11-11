@@ -20,6 +20,7 @@ int lineas = 1;
 	float numero;
 	char tipo[100];
 	int lvalue;
+	int pointer;
   } s;
 }
 %token <s> NUM
@@ -33,7 +34,6 @@ int lineas = 1;
 %token <s> TYPENAME
 %token <s> OPPPMM
 %token <s> SIZEOF
-%token <s> CONSTANTE
 %token <s> FOR
 %token <s> DO
 %token <s> SWITCH
@@ -95,46 +95,55 @@ declaracion:		declaracionVariable ';'
 			|declaracionFuncion
 			;
 declaracionFuncion:	TYPENAME IDENTIFICADOR'('parametros')' cuerpo	{strcpy(funciones[funcioneslen].name,$<s.cadena>2);
-									strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],$<s.cadena>1);
+									strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],$<s.tipo>1);
 									funcioneslen++;}
 			;
 cuerpo:			';'
 			|sentencia
 			;
 parametros:		/*vacio*/
-			|TYPENAME variable 		{$<s.lvalue>$ = 1;
-							strcpy($<s.tipo>$,$<s.tipo>1);
-							strcpy(identificadores.value[identificadores.length],$<s.cadena>2);
-							strcpy(identificadores.type[identificadores.length],strcat($<s.cadena>1,$<s.tipo>2));
-							identificadores.length++;
-							strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],strcat($<s.cadena>1,$<s.tipo>2));
-							funciones[funcioneslen].length++}
-			|parametros',' TYPENAME variable {$<s.lvalue>$ = 3;
-							strcpy($<s.tipo>$,$<s.tipo>3);
-							strcpy(identificadores.value[identificadores.length],$<s.cadena>4);
-							strcpy(identificadores.type[identificadores.length],strcat($<s.cadena>3,$<s.tipo>4));
-							identificadores.length++;
-							strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],strcat($<s.cadena>3,$<s.tipo>4));
-							funciones[funcioneslen].length++}
-			;
-declaracionVariable: 	TYPENAME listaVarSimples {if(yaDeclarado($<s.cadena>2,identificadores)){printf("Doble declaracion de variables\n");}else{
+			|TYPENAME variable 		{if($<s.pointer>2){strcpy($<s.tipo>1,strcat($<s.tipo>1,"*"));}
 							$<s.lvalue>$ = 1;
 							strcpy($<s.tipo>$,$<s.tipo>1);
 							strcpy(identificadores.value[identificadores.length],$<s.cadena>2);
-							strcpy(identificadores.type[identificadores.length],strcat($<s.cadena>1,$<s.tipo>2));
-							identificadores.length++;}}
+							strcpy(identificadores.type[identificadores.length],$<s.tipo>1);
+							identificadores.length++;
+							strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],$<s.tipo>1);
+							funciones[funcioneslen].length++}
+			|parametros',' TYPENAME variable {if($<s.pointer>2){strcpy($<s.tipo>1,strcat($<s.tipo>1,"*"));}
+							$<s.lvalue>$ = 3;
+							strcpy($<s.tipo>$,$<s.tipo>3);
+							strcpy(identificadores.value[identificadores.length],$<s.cadena>4);
+							strcpy(identificadores.type[identificadores.length],$<s.tipo>3);
+							identificadores.length++;
+							strcpy(funciones[funcioneslen].type[funciones[funcioneslen].length],$<s.tipo>3);
+							funciones[funcioneslen].length++;}
+			;
+declaracionVariable: 	TYPENAME unaVarSimple {		if(yaDeclarado($<s.cadena>2,identificadores)){printf("Doble declaracion de variables\n");}
+							else{	if($<s.pointer>2){
+									strcpy($<s.tipo>1,strcat($<s.tipo>1,"*"));
+								}
+								if(chequearTipos($<s.tipo>1,$<s.tipo>2)){
+									$<s.lvalue>$ = 1;
+									strcpy($<s.tipo>$,$<s.tipo>1);
+									strcpy(identificadores.value[identificadores.length],$<s.cadena>2);
+									strcpy(identificadores.type[identificadores.length],$<s.tipo>1);
+									identificadores.length++;
+								}
+								else{
+									printf("Tipos de datos no compatibles en la asignación\n");
+								}
+							}}
 			;
 
-listaVarSimples: 	unaVarSimple
- 			|listaVarSimples ',' unaVarSimple
+unaVarSimple:		variable			
+			|variable inicial		{strcpy($<s.cadena>$,$<s.cadena>1);
+							 strcpy($<s.tipo>$,$<s.tipo>2);} 
 			;
-
-unaVarSimple: 		variable	 
-			|variable inicial 
-			;
-variable:		IDENTIFICADOR opArray {strcpy($<s.tipo>$,$<s.tipo>2);}
-opArray:		/*vacio*/	{strcpy($<s.tipo>$," ");}
-			|'['expresion']'{strcpy($<s.tipo>$,"*");}
+variable:		IDENTIFICADOR opArray {strcpy($<s.tipo>$,$<s.tipo>1);
+						$<s.pointer>$ = $<s.pointer>2;}
+opArray:		/*vacio*/	{$<s.pointer>$ = 0;}
+			|'['expresion']'{$<s.pointer>$ = 1;}
 			;
 inicial: 		'=' expresion	{strcpy($<s.cadena>$,$<s.cadena>2);
 						strcpy($<s.tipo>$,$<s.tipo>2);
@@ -148,12 +157,17 @@ inicial: 		'=' expresion	{strcpy($<s.cadena>$,$<s.cadena>2);
 expresion:          expAsignacion
                     ;
 expAsignacion:      expCondicional
-                    |expUnaria operAsignacion expAsignacion {if(!$<s.lvalue>1){printf("Error en la asignacion: %s no es un lvalue modificable",$<s.numero>1);}}
+                    |expUnaria operAsignacion expAsignacion {if(!$<s.lvalue>1){printf("Error en la asignacion: %f no es un lvalue modificable",$<s.numero>1);}
+								getMap($<s.cadena>1,identificadores,$<s.tipo>1);
+								if(existsMap($<s.cadena>3,identificadores)){getMap($<s.cadena>3,identificadores,$<s.tipo>3);}
+								removePointer($<s.tipo>1,$<s.pointer>1);
+								removePointer($<s.tipo>3,$<s.pointer>3);
+							 	if(!chequearTipos($<s.tipo>1,$<s.tipo>3)){printf("%s y %s tienen tipos incompatibles para la asignacion\n",$<s.cadena>1,$<s.cadena>3);}}
                     ;
-operAsignacion:     '='|OPASIGNACION
+operAsignacion:     '='|OPASIGNACION 
 ;
 expCondicional:     expOr
-                    |expOr '?' expresion ':' expCondicional{$<s.numero>$ = $<s.numero>1?$<s.numero>3:$<s.numero>5;}
+                    |expOr '?' expresion ':' expCondicional
                     ;
 expOr:              expAnd
                     |expOr OPOR expAnd
@@ -165,7 +179,7 @@ expIgualdad:        expRelacional
                     |expIgualdad OPIGUALDAD expRelacional
                     ;
 expRelacional:      expAditiva
-                    |expRelacional OPRELACIONAL expAditiva {$<s.numero>$ = opRelacional($<s.numero>1,$<s.cadena>2,$<s.numero>3)}
+                    |expRelacional OPRELACIONAL expAditiva
                     ;
 expAditiva:         expMultiplicativa
                     |expMultiplicativa '+' expAditiva {checkType($<s.tipo>1,$<s.tipo>3);}
@@ -177,24 +191,24 @@ expMultiplicativa:  expUnaria
                     ;
 expUnaria:          expPostfijo
                     |operUnario expUnaria 
-                    |SIZEOF'('nombreTipo')' {$<s.numero>$ = sizeof(int);}
+                    |SIZEOF'('nombreTipo')'
                     ;
 operUnario:         '&'|'*'|'-'|'!'|OPPPMM
 ;
 expPostfijo:        expPrimaria
-                    |expPostfijo'['expresion']'
+                    |expPostfijo'['expresion']'{$<s.pointer>$ = 1}
                     |expPostfijo'('listaArgumentos')'
                     ;
 listaArgumentos:    expAsignacion
                     |listaArgumentos ',' expAsignacion
                     ;
-expPrimaria:        IDENTIFICADOR {$<s.lvalue>$ = 1;}
+expPrimaria:        IDENTIFICADOR {$<s.lvalue>$ = 1; if(!existsMap($<s.cadena>1,identificadores)){printf("Identificador %s no ha sido declarado\n",$<s.cadena>1);}}
                     |NUM
                     |CADENA
 		    |CARACTER	
                     |'(' expresion ')'{$<s.numero>$ = $<s.numero>2;}
                     ;
-nombreTipo:         TYPENAME 
+nombreTipo:         TYPENAME
 ;
 
 %%

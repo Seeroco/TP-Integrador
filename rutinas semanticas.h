@@ -35,8 +35,67 @@ for(int i = 0; i<m.length; i++){
     printf("%s%s\n",valueName,m.value[i]);
     printf("Tipo: %s\n\n",m.type[i]);
 }
+}
+int existsMap(char idname[100], map identificadores){
 
+    for(int i = 0; i<identificadores.length;i++){
+        if(!strcmp(idname,identificadores.value[i])){
+            return 1;
+        }
+    }
+    return 0;
+}
+void getMap(char idname[100],map identificadores,char tipo[100]){
+    int key = existsMap(idname,identificadores);
+    if(key){
+        for(int i = 0; i<identificadores.length;i++){
+            if(!strcmp(idname,identificadores.value[i])){
+                strcpy(tipo,identificadores.type[i]);
+            }
+        }
+    }
 
+}
+void removePointer(char tipo[100], int p){
+    char s[100];
+
+    if(p){
+        int i = 0;
+        while(i<strlen(tipo)-1){
+            s[i] = tipo[i];
+            i++;
+        }
+        s[i] = '\0';
+        strcpy(tipo,s);
+    }
+
+}
+int chequearTipos(char tipo1[100], char tipo2[100]){
+    if(!strcmp(tipo2,"IDSOLO")){
+        return 1;
+    }
+    else if(!strcmp(tipo1,"float")|| !strcmp(tipo1,"double")){
+
+        if(!strcmp(tipo2,"int")||strcmp(tipo2,"char")|| !strcmp(tipo2,"double") || !strcmp(tipo2,"float") || !strcmp(tipo2,"long") || !strcmp(tipo2,"short")){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+
+    }
+    else if(!strcmp(tipo1,"char*")){
+        return !strcmp(tipo1,tipo2);
+    }
+    else if(!strcmp(tipo1,"int")|| !strcmp(tipo1,"long") || !strcmp(tipo1,"short")|| !strcmp(tipo1,"char")){
+        if(!strcmp(tipo2,"int")|| !strcmp(tipo2,"short") || !strcmp(tipo2,"long") || !strcmp(tipo2,"char")){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+    return 0;
 }
 
 void reportFunction(fInfo funciones[100],int funcioneslen){

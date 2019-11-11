@@ -288,9 +288,9 @@ static yyconst short int yy_accept[100] =
     {   0,
         0,    0,   41,   40,   39,   19,   38,   23,   40,   22,
        40,   15,   16,   13,   11,   24,   12,   14,    3,    2,
-       21,   27,   36,   18,   36,   20,   32,   25,   26,   32,
+       21,   27,   36,   17,   36,   20,   32,   25,   26,   32,
        32,   32,   32,   32,   32,   32,   32,   32,   32,   28,
-       40,   29,   17,    0,    4,    0,   35,    0,   33,   37,
+       40,   29,   18,    0,    4,    0,   35,    0,   33,   37,
         0,    3,    2,   36,   32,   32,   10,   32,   32,   32,
         6,   32,   32,   32,   32,   32,   32,   32,   34,    4,
         1,    3,   32,   32,   32,   32,    7,   31,   32,   32,
@@ -684,12 +684,12 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 24 "expresiones.l"
-{yylval.s.numero = atoi(yytext); strcpy(yylval.s.tipo,"int"); return NUM;}
+{yylval.s.numero = atoi(yytext); strcpy(yylval.s.tipo,"int");strcpy(yylval.s.cadena,yytext); return NUM;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 25 "expresiones.l"
-{yylval.s.numero = atof(yytext);strcpy(yylval.s.tipo,"float");return NUM;}
+{yylval.s.numero = atof(yytext);strcpy(yylval.s.tipo,"float");strcpy(yylval.s.cadena,yytext);return NUM;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -759,121 +759,121 @@ YY_RULE_SETUP
 case 17:
 YY_RULE_SETUP
 #line 39 "expresiones.l"
-{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
+{return '=';}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 40 "expresiones.l"
-{return '=';}
+{strcpy(yylval.s.cadena,yytext);return OPIGUALDAD;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 41 "expresiones.l"
+#line 42 "expresiones.l"
 {return '\n';}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 42 "expresiones.l"
+#line 43 "expresiones.l"
 {return '?';}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 43 "expresiones.l"
+#line 44 "expresiones.l"
 {return ':';}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 44 "expresiones.l"
+#line 45 "expresiones.l"
 {return '&';}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 45 "expresiones.l"
+#line 46 "expresiones.l"
 {return '!';}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 46 "expresiones.l"
+#line 47 "expresiones.l"
 {return ',';}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 47 "expresiones.l"
+#line 48 "expresiones.l"
 {return '[';}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 48 "expresiones.l"
+#line 49 "expresiones.l"
 {return ']';}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 49 "expresiones.l"
+#line 50 "expresiones.l"
 {return ';';}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 50 "expresiones.l"
+#line 51 "expresiones.l"
 {return '{';}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 51 "expresiones.l"
+#line 52 "expresiones.l"
 {return '}';}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 52 "expresiones.l"
+#line 53 "expresiones.l"
 {return SIZEOF;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 53 "expresiones.l"
-{strcpy(yylval.s.cadena,yytext);return TYPENAME;}
+#line 54 "expresiones.l"
+{strcpy(yylval.s.tipo,yytext); return TYPENAME;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 54 "expresiones.l"
-{strcpy(yylval.s.cadena,yytext);strcpy(yylval.s.tipo," ");return IDENTIFICADOR;}
+#line 55 "expresiones.l"
+{strcpy(yylval.s.cadena,yytext);strcpy(yylval.s.tipo,"IDSOLO");return IDENTIFICADOR;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 55 "expresiones.l"
+#line 56 "expresiones.l"
 {strcpy(yylval.s.cadena,yytext);return OPASIGNACION;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 56 "expresiones.l"
+#line 57 "expresiones.l"
 {strcpy(yylval.s.cadena,yytext);return OPOR;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 57 "expresiones.l"
+#line 58 "expresiones.l"
 {strcpy(yylval.s.cadena,yytext);return OPAND;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 59 "expresiones.l"
+#line 60 "expresiones.l"
 {strcpy(yylval.s.cadena,yytext);return OPRELACIONAL;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 60 "expresiones.l"
+#line 61 "expresiones.l"
 {strcpy(yylval.s.cadena,yytext);return OPPPMM;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 61 "expresiones.l"
+#line 62 "expresiones.l"
 
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 62 "expresiones.l"
+#line 63 "expresiones.l"
 
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 63 "expresiones.l"
+#line 64 "expresiones.l"
 ECHO;
 	YY_BREAK
 #line 880 "lex.yy.c"
@@ -1762,5 +1762,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 63 "expresiones.l"
-
+#line 64 "expresiones.l"

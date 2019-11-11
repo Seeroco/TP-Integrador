@@ -50,15 +50,14 @@
      TYPENAME = 266,
      OPPPMM = 267,
      SIZEOF = 268,
-     CONSTANTE = 269,
-     FOR = 270,
-     DO = 271,
-     SWITCH = 272,
-     IF = 273,
-     ELSE = 274,
-     WHILE = 275,
-     RETURN = 276,
-     CARACTER = 277
+     FOR = 269,
+     DO = 270,
+     SWITCH = 271,
+     IF = 272,
+     ELSE = 273,
+     WHILE = 274,
+     RETURN = 275,
+     CARACTER = 276
    };
 #endif
 
@@ -76,6 +75,7 @@ typedef union YYSTYPE
 	float numero;
 	char tipo[100];
 	int lvalue;
+	int pointer;
   } s;
 
 
